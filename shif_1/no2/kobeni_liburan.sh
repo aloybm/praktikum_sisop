@@ -1,25 +1,46 @@
 #!/bin/bash
 
-# Mendapatkan jam sekarang
-jam=$(date +%H)
+# Download gambar
+function download() {
+  hour=$(date +"%H")
+  num_download=$hour
 
-# Membuat folder kumpulan
-mkdir "kumpulan_$jam"
+  if [ $hour -eq 0 ]; then
+    num_download=1
+  fi
 
-# Mendownload gambar
-for ((i=0; i<=$jam; i++))
-do
-    if [ $i == 0 ]
-    then
-        wget -O "kumpulan_$jam/perjalanan_$i" "https://upload.wikimedia.org/wikipedia/commons/f/f1/Indonesia_declaration_of_independence_17_August_1945.jpg"
-        break
-    fi
-    if [ $i == 1 ]
-    then
-        wget -O "kumpulan_$jam/perjalanan_$i" "https://upload.wikimedia.org/wikipedia/commons/f/f1/Indonesia_declaration_of_independence_17_August_1945.jpg"get -O "kumpulan_$jam/pdkt_kusuma_$i" https://loremflickr.com/320/240/bunny
-        break
-    else
-        wget -O "kumpulan_$jam/perjalanan_$i" "https://upload.wikimedia.org/wikipedia/commons/f/f1/Indonesia_declaration_of_independence_17_August_1945.jpg"
-    fi
-done
+  folder_name="kumpulan_$((num_download/10+1)).FOLDER"
+  file_name="perjalanan_$num_download"
+  url="https://picsum.photos/1920/1080/?indonesia"
 
+  mkdir -p "$folder_name"
+  cd "$folder_name"
+
+  for (( i=1; i<=$num_download; i++ ))
+  do
+    wget -q -O "$file_name" "$url"
+    file_name="perjalanan_$((i+1))"
+  done
+}
+
+# Zip folder
+function zip_folder() {
+  folder_name="kumpulan_$(( $(ls -1 | grep -c "kumpulan_") + 1 ))"
+  zip_name="devil_$(( $(ls -1 | grep -c "devil_") + 1 )).ZIP"
+
+  mkdir -p "$folder_name"
+  cp -r "kumpulan_"* "$folder_name"
+
+  zip -r "$zip_name" "$folder_name"
+
+  rm -rf "$folder_name"
+}
+
+# Check parameter
+if [ "$1" = "download" ]; then
+  download
+elif [ "$1" = "zip" ]; then
+  zip_folder
+else
+  echo "Invalid parameter"
+fi
