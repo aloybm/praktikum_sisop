@@ -9,7 +9,7 @@ function download() {
     num_download=1
   fi
 
-  folder_name="kumpulan_$((num_download/10+1)).FOLDER"
+  folder_name="kumpulan_$((num_download/10+1))"
   file_name="perjalanan_$num_download"
   url="https://picsum.photos/1920/1080/?indonesia"
 
